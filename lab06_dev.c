@@ -8,7 +8,20 @@ static struct timer_list timer;
 
 static long timeout = 2000;
 
-void time_handler(unsigned long data);
+void time_handler(unsigned long data)
+{
+	int ret;
+	//KERN_INFO Информационные сообщения. 
+	//Многие драйверы выводят информацию об оборудовании, которое они нашли во время запуска на этом уровне.
+	printk(KERN_INFO "Lab06 time handler, timeout=%ld \n", timeout);
+	//задать время работы таймера, что делается с помощью вызова функции mod_timer
+	//время измеряется с помощью глобальной переменной с именем jiffies, 
+	//которая определяет количество временных тиков (тактов), прошедших после загрузки системы
+	ret = mod_timer(&timer, jiffies + msecs_to_jiffies(timeout));
+	if (ret) {
+		printk(KERN_ERR "Fail to mod timer\n");
+	}
+}
 
 static ssize_t write_handler(struct file *filp, const char *buff,
 		size_t count, loff_t *offp)
