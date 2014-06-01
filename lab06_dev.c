@@ -10,7 +10,18 @@ static long timeout = 2000;
 
 void time_handler(unsigned long data);
 
-static ssize_t write_handler(struct file *filp, const char *buff, size_t count, loff_t *offp);
+static ssize_t write_handler(struct file *filp, const char *buff,
+		size_t count, loff_t *offp)
+{
+	long t = -1l;
+	kstrtol(buff, 10, &t);
+	if (t == -1l) {
+		printk(KERN_INFO "Wrong argument.\n");
+		return count;
+	}
+	timeout = t;
+	return count;
+}
 
 //поле owner нужно для организации счетчика ссылок на модуль.
 //Счетчик ссылок нужен, чтобы модуль не выгрузили раньше времени, например, если файловая система была примонтирована,
